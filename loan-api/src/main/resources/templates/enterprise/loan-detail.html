@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/enterprise-layout}">
+
+<th:block layout:fragment="content">
+    <div class="enterprise-layout">
+        <!-- Sidebar -->
+        <th:block th:replace="~{fragments/sidebar :: sidebar(currentPage='loans')}"></th:block>
+
+        <!-- Main -->
+        <div class="enterprise-main">
+            <th:block th:replace="~{fragments/topbar :: topbar(title='贷款详情')}"></th:block>
+
+            <div class="page-content">
+                <div class="page-header fade-in">
+                    <div class="page-header-left">
+                        <h2>贷款详情</h2>
+                        <p>
+                            <a href="/enterprise/loans" style="color:var(--color-text-muted);">贷款列表</a>
+                            <span style="color:var(--color-text-muted);opacity:0.4;"> / </span>
+                            贷款编号 <span id="detail-loan-id" class="text-mono">—</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="detail-grid fade-in fade-in-delay-1">
+                    <!-- Left: Info -->
+                    <div>
+                        <div class="glass-card" style="padding: var(--space-8); margin-bottom: var(--space-6);">
+                            <div class="detail-section">
+                                <h4 class="detail-section-title">基本信息</h4>
+                                <div class="detail-field">
+                                    <span class="detail-field-label">贷款金额</span>
+                                    <span class="detail-field-value" style="font-size:var(--text-lg);color:var(--color-accent);" id="detail-amount">—</span>
+                                </div>
+                                <div class="detail-field">
+                                    <span class="detail-field-label">贷款期限</span>
+                                    <span class="detail-field-value" id="detail-term">—</span>
+                                </div>
+                                <div class="detail-field">
+                                    <span class="detail-field-label">年利率</span>
+                                    <span class="detail-field-value" id="detail-rate">—</span>
+                                </div>
+                                <div class="detail-field">
+                                    <span class="detail-field-label">还款方式</span>
+                                    <span class="detail-field-value" id="detail-method">—</span>
+                                </div>
+                                <div class="detail-field">
+                                    <span class="detail-field-label">贷款用途</span>
+                                    <span class="detail-field-value" id="detail-purpose">—</span>
+                                </div>
+                                <div class="detail-field">
+                                    <span class="detail-field-label">申请日期</span>
+                                    <span class="detail-field-value" id="detail-date">—</span>
+                                </div>
+                                <div class="detail-field">
+                                    <span class="detail-field-label">当前状态</span>
+                                    <span class="detail-field-value" id="detail-status">—</span>
+                                </div>
+                            </div>
+
+                            <div class="detail-section" id="approve-comment-section" style="display:none;">
+                                <h4 class="detail-section-title">审批意见</h4>
+                                <div class="glass-card" style="padding: var(--space-6); background: rgba(99,102,241,0.05);">
+                                    <p style="font-size:var(--text-sm);color:var(--color-text-secondary);" id="detail-comment">—</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sign Action -->
+                        <div class="glass-card" style="padding: var(--space-6); text-align: center;" id="sign-section" style="display:none;">
+                            <p style="margin-bottom: var(--space-4); color: var(--color-text-secondary);">贷款已审批通过，请确认签约</p>
+                            <button class="btn btn-primary btn-lg" id="sign-btn" onclick="signLoan(currentLoanId)">
+                                确认签约
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Right: Credit Score -->
+                    <div>
+                        <div class="glass-card" style="margin-bottom: var(--space-6);">
+                            <h4 class="detail-section-title" style="padding: var(--space-6) var(--space-6) 0;">AI 信用评分</h4>
+                            <div class="credit-gauge" id="credit-gauge">
+                                <p style="color:var(--color-text-muted);font-size:var(--text-sm);text-align:center;">加载中...</p>
+                            </div>
+                        </div>
+
+                        <!-- Quick Links -->
+                        <div class="glass-card" style="padding: var(--space-6);">
+                            <h4 class="detail-section-title">快捷操作</h4>
+                            <div style="display:flex;flex-direction:column;gap:var(--space-3);">
+                                <a id="link-repayments" href="#" class="btn btn-outline btn-sm" style="justify-content:center;">查看还款计划</a>
+                                <a href="/enterprise/calculator" class="btn btn-ghost btn-sm" style="justify-content:center;">贷款计算器</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden data -->
+    <div id="loan-detail-content" th:data-loan-id="${loanId}" style="display:none;"></div>
+</th:block>
+
+<th:block layout:fragment="scripts">
+    <script th:src="@{/js/enterprise-loan.js}"></script>
+    <script>
+        let currentLoanId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('loan-detail-content');
+            currentLoanId = container?.dataset?.loanId;
+            if (currentLoanId) {
+                document.getElementById('link-repayments').href = '/enterprise/repayments?loanId=' + currentLoanId;
+                loadLoanDetail();
+            }
+        });
+    </script>
+</th:block>
+
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/enterprise-layout}">
+
+<th:block layout:fragment="content">
+    <div class="enterprise-layout">
+        <!-- Sidebar -->
+        <th:block th:replace="~{fragments/sidebar :: sidebar(currentPage='loans')}"></th:block>
+
+        <!-- Main -->
+        <div class="enterprise-main">
+            <!-- Top Bar -->
+            <th:block th:replace="~{fragments/topbar :: topbar(title='贷款列表')}"></th:block>
+
+            <!-- Page Content -->
+            <div class="page-content">
+                <!-- Stats -->
+                <div class="stats-row fade-in">
+                    <div class="stat-card">
+                        <div class="stat-card-label">贷款总额</div>
+                        <div class="stat-card-value" id="stat-total-amount">¥0.00</div>
+                        <div class="stat-card-change up">全部贷款</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-label">待审批</div>
+                        <div class="stat-card-value" id="stat-pending-count" style="color: var(--color-warning);">0</div>
+                        <div class="stat-card-change up">笔</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-label">已放款</div>
+                        <div class="stat-card-value" id="stat-granted-count" style="color: var(--color-success);">0</div>
+                        <div class="stat-card-change up">笔</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-card-label">待还款</div>
+                        <div class="stat-card-value" id="stat-active-count" style="color: var(--color-info);">0</div>
+                        <div class="stat-card-change up">笔</div>
+                    </div>
+                </div>
+
+                <!-- Filter + Action -->
+                <div class="page-header fade-in fade-in-delay-1">
+                    <div class="page-header-left">
+                        <h2>贷款记录</h2>
+                        <p>查看和管理您的贷款申请</p>
+                    </div>
+                    <div class="page-header-right">
+                        <select id="filter-status" class="form-select" onchange="loadLoanList()">
+                            <option value="">全部状态</option>
+                            <option value="PENDING">待审批</option>
+                            <option value="APPROVED">已通过</option>
+                            <option value="REJECTED">已拒绝</option>
+                            <option value="GRANTED">已放款</option>
+                            <option value="REPAID">已还清</option>
+                            <option value="OVERDUE">已逾期</option>
+                        </select>
+                        <a href="/enterprise/loans/apply" class="btn btn-primary">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            申请贷款
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="data-table-wrapper fade-in fade-in-delay-2">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>编号</th>
+                                <th>贷款金额</th>
+                                <th>期限</th>
+                                <th>年利率</th>
+                                <th>信用评分</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="loan-table-body">
+                            <!-- Rendered by JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div id="loan-pagination" class="pagination"></div>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<th:block layout:fragment="scripts">
+    <script th:src="@{/js/enterprise-loan.js}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadLoanList();
+        });
+    </script>
+</th:block>
+
+</html>

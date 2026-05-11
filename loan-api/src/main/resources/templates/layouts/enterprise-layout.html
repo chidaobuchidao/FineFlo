@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="普惠金融管理平台 — 企业服务">
+    <title th:text="${pageTitle} ?: '普惠金融管理平台'">普惠金融管理平台</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" th:href="@{/css/enterprise-base.css}">
+    <link rel="stylesheet" th:href="@{/css/enterprise-dashboard.css}">
+    <th:block layout:fragment="extra-head" />
+
+    <!-- Particle background (login/register only) -->
+    <th:block th:if="${showParticles}">
+        <link rel="stylesheet" th:href="@{/css/enterprise-login.css}">
+    </th:block>
+</head>
+<body>
+
+    <!-- Page-specific content -->
+    <th:block layout:fragment="content">
+        <p>Page content goes here.</p>
+    </th:block>
+
+    <!-- Scripts -->
+    <script th:src="@{/js/enterprise-api.js}"></script>
+
+    <th:block layout:fragment="scripts"></th:block>
+
+    <th:block th:if="${showParticles}">
+        <script th:src="@{/js/particles.js}"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                new ParticleSystem('particles-canvas');
+            });
+        </script>
+    </th:block>
+
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/enterprise-layout}">
+
+<th:block layout:fragment="content">
+    <div class="enterprise-layout">
+        <th:block th:replace="~{fragments/sidebar :: sidebar(currentPage='overdue')}"></th:block>
+
+        <div class="enterprise-main">
+            <th:block th:replace="~{fragments/topbar :: topbar(title='逾期记录')}"></th:block>
+
+            <div class="page-content">
+                <div class="page-header fade-in">
+                    <div class="page-header-left">
+                        <h2>逾期记录</h2>
+                        <p>查看历史逾期记录及罚息信息</p>
+                    </div>
+                </div>
+
+                <div class="data-table-wrapper fade-in fade-in-delay-1">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>贷款编号</th>
+                                <th>逾期天数</th>
+                                <th>逾期金额</th>
+                                <th>罚息</th>
+                                <th>开始日期</th>
+                                <th>结清日期</th>
+                                <th>状态</th>
+                            </tr>
+                        </thead>
+                        <tbody id="overdue-table-body">
+                            <!-- Rendered by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<th:block layout:fragment="scripts">
+    <script th:src="@{/js/enterprise-loan.js}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const tbody = document.getElementById('overdue-table-body');
+            try {
+                const res = await loanApi.getOverdue();
+                tbody.innerHTML = res.data && res.data.length
+                    ? res.data.map(o => `
+                        <tr>
+                            <td><span class="text-mono">#${o.loanId}</span></td>
+                            <td style="color:var(--color-danger);font-weight:600;">${o.overdueDays} 天</td>
+                            <td>¥${formatMoney(o.overdueAmount)}</td>
+                            <td style="color:var(--color-warning);">¥${formatMoney(o.penalty)}</td>
+                            <td>${formatDate(o.startDate)}</td>
+                            <td>${formatDate(o.endDate)}</td>
+                            <td>${statusBadge(o.status)}</td>
+                        </tr>
+                    `).join('')
+                    : `<tr><td colspan="7" class="empty-state" style="color:var(--color-success);">无逾期记录，信用良好</td></tr>`;
+            } catch (e) {
+                tbody.innerHTML = `<tr><td colspan="7" class="empty-state" style="color:var(--color-danger);">加载失败：${e.message}</td></tr>`;
+            }
+        });
+    </script>
+</th:block>
+
+</html>

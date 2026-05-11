@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/enterprise-layout}">
+
+<th:block layout:fragment="content">
+    <div class="enterprise-layout">
+        <!-- Sidebar -->
+        <th:block th:replace="~{fragments/sidebar :: sidebar(currentPage='apply')}"></th:block>
+
+        <!-- Main -->
+        <div class="enterprise-main">
+            <!-- Top Bar -->
+            <th:block th:replace="~{fragments/topbar :: topbar(title='贷款申请')}"></th:block>
+
+            <!-- Page Content -->
+            <div class="page-content">
+                <div class="page-header fade-in">
+                    <div class="page-header-left">
+                        <h2>提交贷款申请</h2>
+                        <p>填写贷款信息，提交后将由AI风控系统进行信用评估</p>
+                    </div>
+                </div>
+
+                <!-- Apply Form -->
+                <div class="apply-form fade-in fade-in-delay-1">
+                    <!-- Loan Info -->
+                    <div class="apply-form-section">
+                        <h4 style="margin-bottom: var(--space-4);">贷款信息</h4>
+                        <div class="glass-card" style="padding: var(--space-8);">
+                            <form id="apply-form" onsubmit="submitLoanApply(event)">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6);">
+                                    <div class="form-group">
+                                        <label class="form-label" for="loanAmount">贷款金额（元）*</label>
+                                        <input type="number" id="loanAmount" class="form-input" placeholder="如 500000"
+                                               required min="10000" max="50000000" step="1"
+                                               onchange="updateCalculatorPreview()">
+                                        <span class="form-hint">1万 ~ 5000万元</span>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-label" for="loanTerm">贷款期限（月）*</label>
+                                        <select id="loanTerm" class="form-select" required onchange="updateCalculatorPreview()">
+                                            <option value="">请选择</option>
+                                            <option value="3">3 个月</option>
+                                            <option value="6">6 个月</option>
+                                            <option value="12" selected>12 个月</option>
+                                            <option value="24">24 个月</option>
+                                            <option value="36">36 个月</option>
+                                            <option value="48">48 个月</option>
+                                            <option value="60">60 个月</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-label" for="repaymentMethod">还款方式*</label>
+                                        <select id="repaymentMethod" class="form-select" required onchange="updateCalculatorPreview()">
+                                            <option value="EQUAL_INSTALLMENT" selected>等额本息</option>
+                                            <option value="EQUAL_PRINCIPAL">等额本金</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-label" for="interestRate">年利率</label>
+                                        <input type="text" id="interestRate" class="form-input"
+                                               value="4.35%" readonly
+                                               style="background: rgba(255,255,255,0.02); color: var(--color-text-muted); cursor: not-allowed;">
+                                        <span class="form-hint">利率由系统根据信用评估确定</span>
+                                    </div>
+
+                                    <div class="form-group" style="grid-column: 1 / -1;">
+                                        <label class="form-label" for="loanPurpose">贷款用途*</label>
+                                        <textarea id="loanPurpose" class="form-textarea" placeholder="请详细说明贷款用途，如：用于扩大生产线、采购原材料、补充流动资金等"
+                                                  required maxlength="255" style="min-height: 100px;"></textarea>
+                                    </div>
+                                </div>
+
+                                <!-- Calculator Preview -->
+                                <div id="calculator-preview" style="margin-top: var(--space-6); display: none;">
+                                    <h4 style="margin-bottom: var(--space-3);">还款预估</h4>
+                                    <div class="calculator-result">
+                                        <div class="calculator-result-item">
+                                            <span class="calculator-result-label">月还款额</span>
+                                            <span class="calculator-result-value highlight" id="preview-monthly">—</span>
+                                        </div>
+                                        <div class="calculator-result-item">
+                                            <span class="calculator-result-label">总利息</span>
+                                            <span class="calculator-result-value" id="preview-interest">—</span>
+                                        </div>
+                                        <div class="calculator-result-item">
+                                            <span class="calculator-result-label">总还款额</span>
+                                            <span class="calculator-result-value" id="preview-total">—</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="apply-error" style="color:var(--color-danger);font-size:var(--text-sm);margin-top:var(--space-4);display:none;"></div>
+
+                                <div style="margin-top: var(--space-6); display: flex; gap: var(--space-4);">
+                                    <button type="submit" class="btn btn-primary btn-lg" id="submit-btn">
+                                        提交申请
+                                    </button>
+                                    <a href="/enterprise/loans" class="btn btn-outline btn-lg">取消</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<th:block layout:fragment="scripts">
+    <script th:src="@{/js/enterprise-calculator.js}"></script>
+    <script th:src="@{/js/enterprise-loan.js}"></script>
+    <script>
+        function updateCalculatorPreview() {
+            const amount = parseFloat(document.getElementById('loanAmount').value);
+            const term = parseInt(document.getElementById('loanTerm').value);
+            const mode = document.getElementById('repaymentMethod').value;
+            const preview = document.getElementById('calculator-preview');
+
+            if (!amount || !term || amount < 10000) {
+                preview.style.display = 'none';
+                return;
+            }
+
+            preview.style.display = 'block';
+            const rate = 0.0435; // default annual rate
+            const result = calculate(amount, term, rate, mode);
+
+            document.getElementById('preview-monthly').textContent = '¥' + formatMoney(result.monthlyPayment);
+            document.getElementById('preview-interest').textContent = '¥' + formatMoney(result.totalInterest);
+            document.getElementById('preview-total').textContent = '¥' + formatMoney(result.totalPayment);
+        }
+    </script>
+</th:block>
+
+</html>

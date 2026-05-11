@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/enterprise-layout}">
+
+<th:block layout:fragment="extra-head">
+    <link rel="stylesheet" th:href="@{/css/enterprise-login.css}">
+</th:block>
+
+<th:block layout:fragment="content">
+    <div class="auth-page">
+        <canvas id="particles-canvas"></canvas>
+
+        <div class="auth-card register-card">
+            <div class="auth-header">
+                <div class="auth-logo">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="8.5" cy="7" r="4"/>
+                        <line x1="20" y1="8" x2="20" y2="14"/>
+                        <line x1="23" y1="11" x2="17" y2="11"/>
+                    </svg>
+                </div>
+                <h1 class="auth-title">企业用户注册</h1>
+                <p class="auth-subtitle">创建您的企业账户，开启普惠金融服务</p>
+            </div>
+
+            <form class="auth-form" id="registerForm" onsubmit="handleRegister(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="username">用户名 *</label>
+                        <input type="text" id="username" class="form-input" placeholder="登录账号" required minlength="3" maxlength="50">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="realName">真实姓名 *</label>
+                        <input type="text" id="realName" class="form-input" placeholder="法人/联系人姓名" required maxlength="50">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="password">密码 *</label>
+                        <input type="password" id="password" class="form-input" placeholder="至少6位" required minlength="6" maxlength="32">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="phone">手机号 *</label>
+                        <input type="tel" id="phone" class="form-input" placeholder="13800001111" required pattern="1[3-9]\d{9}">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="enterpriseName">企业名称</label>
+                    <input type="text" id="enterpriseName" class="form-input" placeholder="营业执照上的企业全称" maxlength="100">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label" for="creditCode">统一社会信用代码</label>
+                        <input type="text" id="creditCode" class="form-input" placeholder="18位代码" maxlength="50">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="industry">所属行业</label>
+                        <select id="industry" class="form-select">
+                            <option value="">请选择</option>
+                            <option value="制造业">制造业</option>
+                            <option value="信息技术">信息技术</option>
+                            <option value="批发零售">批发零售</option>
+                            <option value="建筑业">建筑业</option>
+                            <option value="农林牧渔">农林牧渔</option>
+                            <option value="交通运输">交通运输</option>
+                            <option value="住宿餐饮">住宿餐饮</option>
+                            <option value="金融业">金融业</option>
+                            <option value="房地产">房地产</option>
+                            <option value="其他">其他</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="register-error" style="color:var(--color-danger);font-size:var(--text-sm);display:none;"></div>
+
+                <button type="submit" class="btn btn-primary btn-lg" id="register-btn">
+                    注 册
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                已有账号？<a href="/enterprise/login">立即登录</a>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<th:block layout:fragment="scripts">
+    <script>
+        async function handleRegister(e) {
+            e.preventDefault();
+            const btn = document.getElementById('register-btn');
+            const errorEl = document.getElementById('register-error');
+
+            const form = {
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value,
+                realName: document.getElementById('realName').value,
+                phone: document.getElementById('phone').value,
+            };
+
+            if (!/^1[3-9]\d{9}$/.test(form.phone)) {
+                errorEl.textContent = '请输入正确的手机号';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = '注册中...';
+            errorEl.style.display = 'none';
+
+            try {
+                const res = await authApi.register(form);
+                showToast('注册成功！即将跳转登录页...', 'success');
+                setTimeout(() => { window.location.href = '/enterprise/login'; }, 1500);
+            } catch (err) {
+                errorEl.textContent = err.message;
+                errorEl.style.display = 'block';
+                btn.disabled = false;
+                btn.textContent = '注 册';
+            }
+        }
+    </script>
+</th:block>
+
+</html>

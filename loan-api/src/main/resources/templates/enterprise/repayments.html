@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layouts/enterprise-layout}">
+
+<th:block layout:fragment="content">
+    <div class="enterprise-layout">
+        <th:block th:replace="~{fragments/sidebar :: sidebar(currentPage='repayments')}"></th:block>
+
+        <div class="enterprise-main">
+            <th:block th:replace="~{fragments/topbar :: topbar(title='还款计划')}"></th:block>
+
+            <div class="page-content">
+                <div class="page-header fade-in">
+                    <div class="page-header-left">
+                        <h2>还款计划</h2>
+                        <p>查看和管理贷款还款计划</p>
+                    </div>
+                </div>
+
+                <div class="glass-card fade-in fade-in-delay-1" style="padding: var(--space-8); margin-bottom: var(--space-6);">
+                    <div class="form-group" style="max-width: 300px; margin-bottom: var(--space-6);">
+                        <label class="form-label" for="repayment-loan-select">选择贷款</label>
+                        <select id="repayment-loan-select" class="form-select" onchange="loadRepayments(this.value)">
+                            <option value="">请选择贷款</option>
+                        </select>
+                    </div>
+
+                    <div class="data-table-wrapper schedule-table">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>期数</th>
+                                    <th>应还金额</th>
+                                    <th>实还金额</th>
+                                    <th>到期日期</th>
+                                    <th>还款日期</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="repayment-table-body">
+                                <tr><td colspan="7" class="empty-state">请选择贷款查看还款计划</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<th:block layout:fragment="scripts">
+    <script th:src="@{/js/enterprise-loan.js}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Load loan list for the dropdown
+            try {
+                const res = await loanApi.getList(1, 100);
+                const select = document.getElementById('repayment-loan-select');
+                res.data.records.forEach(loan => {
+                    const opt = document.createElement('option');
+                    opt.value = loan.id;
+                    opt.textContent = `#${loan.id} — ¥${formatMoney(loan.loanAmount)} (${formatDate(loan.applyDate)})`;
+                    select.appendChild(opt);
+                });
+
+                // Auto-select from URL param
+                const params = new URLSearchParams(window.location.search);
+                const loanId = params.get('loanId');
+                if (loanId && res.data.records.some(l => l.id == loanId)) {
+                    select.value = loanId;
+                    loadRepayments(loanId);
+                }
+            } catch (e) {
+                showToast('加载贷款列表失败：' + e.message, 'error');
+            }
+        });
+    </script>
+</th:block>
+
+</html>
