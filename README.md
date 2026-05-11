@@ -1,4 +1,4 @@
-# FineFlo — 普惠金融管理系统
+# FineFlo — 金融管理系统
 
 面向中小微企业的贷款审批管理平台，SpringBoot + Vue 3 + Python Flask 三端协作，集成 AI 风控引擎。
 
