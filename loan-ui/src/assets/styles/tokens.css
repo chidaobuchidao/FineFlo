@@ -1,0 +1,166 @@
+/* ============================================================
+   Shared tokens — do not change with theme
+   ============================================================ */
+:root {
+  /* Status */
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-danger: #EF4444;
+  --color-info: #3B82F6;
+
+  /* Typography */
+  --font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* Radii */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Spring animations */
+  --spring-fast: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --spring-standard: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --spring-bouncy: cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  --stagger-delay: 50ms;
+
+  /* Duration tiers for animations */
+  --duration-instant: 100ms;
+  --duration-micro: 200ms;
+  --duration-standard: 350ms;
+  --duration-entrance: 500ms;
+  --duration-reveal: 800ms;
+
+  /* Layout */
+  --sidebar-width: 260px;
+  --topbar-height: 64px;
+}
+
+/* ============================================================
+   Dark theme (default)
+   ============================================================ */
+:root,
+[data-theme="dark"] {
+  /* Palette */
+  --color-primary: #6366F1;
+  --color-primary-hover: #818CF8;
+  --color-primary-dim: rgba(99, 102, 241, 0.15);
+  --color-accent: #06B6D4;
+  --color-accent-hover: #22D3EE;
+
+  /* Surfaces */
+  --color-bg: #0B0F19;
+  --color-bg-elevated: #111827;
+  --color-surface: rgba(255, 255, 255, 0.04);
+  --color-surface-hover: rgba(255, 255, 255, 0.06);
+  --color-surface-active: rgba(255, 255, 255, 0.08);
+
+  /* Text */
+  --color-text: #F1F5F9;
+  --color-text-secondary: #94A3B8;
+  --color-text-muted: #64748B;
+
+  /* Borders */
+  --border-glass: 1px solid rgba(99, 102, 241, 0.15);
+  --border-subtle: 1px solid rgba(255, 255, 255, 0.06);
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.3);
+}
+
+/* ============================================================
+   Eye-care light theme
+   ============================================================ */
+[data-theme="light"] {
+  /* Palette — slightly stronger than dark for better contrast on white */
+  --color-primary: #4F46E5;
+  --color-primary-hover: #4338CA;
+  --color-primary-dim: rgba(79, 70, 229, 0.1);
+  --color-accent: #0E7490;
+  --color-accent-hover: #0891B2;
+
+  /* Surfaces — more opaque to differentiate from bg */
+  --color-bg: #F1F5F9;
+  --color-bg-elevated: #FFFFFF;
+  --color-surface: rgba(0, 0, 0, 0.04);
+  --color-surface-hover: rgba(0, 0, 0, 0.07);
+  --color-surface-active: rgba(0, 0, 0, 0.1);
+
+  /* Text — darker for readability on light bg */
+  --color-text: #0F172A;
+  --color-text-secondary: #475569;
+  --color-text-muted: #64748B;
+
+  /* Borders — slightly more visible */
+  --border-glass: 1px solid rgba(79, 70, 229, 0.12);
+  --border-subtle: 1px solid rgba(0, 0, 0, 0.08);
+
+  /* Shadows — subtle depth for light mode */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.1);
+  --shadow-glow: 0 0 24px rgba(79, 70, 229, 0.18);
+}
+
+/* ============================================================
+   System preference — follows OS color scheme
+   ============================================================ */
+@media (prefers-color-scheme: light) {
+  [data-theme="system"] {
+    --color-primary: #4F46E5;
+    --color-primary-hover: #4338CA;
+    --color-primary-dim: rgba(79, 70, 229, 0.1);
+    --color-accent: #0E7490;
+    --color-accent-hover: #0891B2;
+
+    --color-bg: #F1F5F9;
+    --color-bg-elevated: #FFFFFF;
+    --color-surface: rgba(0, 0, 0, 0.04);
+    --color-surface-hover: rgba(0, 0, 0, 0.07);
+    --color-surface-active: rgba(0, 0, 0, 0.1);
+
+    --color-text: #0F172A;
+    --color-text-secondary: #475569;
+    --color-text-muted: #64748B;
+
+    --border-glass: 1px solid rgba(79, 70, 229, 0.12);
+    --border-subtle: 1px solid rgba(0, 0, 0, 0.08);
+
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.1);
+    --shadow-glow: 0 0 24px rgba(79, 70, 229, 0.18);
+  }
+}
