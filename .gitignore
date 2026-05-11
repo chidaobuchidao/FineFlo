@@ -1,0 +1,40 @@
+# ============================================
+# 普惠金融管理系统 — .gitignore
+# ============================================
+
+# --- Java ---
+loan-api/target/
+eureka-server/target/
+*.jar
+*.class
+
+# --- Node ---
+loan-ui/node_modules/
+loan-ui/dist/
+node_modules/
+
+# --- Python ---
+risk-engine/__pycache__/
+risk-engine/model/*.pkl
+*.pyc
+
+# --- IDE ---
+.idea/
+.vscode/
+*.iml
+
+# --- Docker ---
+docker/.env
+.env
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+
+# --- Superpowers ---
+.superpowers/
+
+# --- Logs ---
+*.log
+.claude/
+Worktile/
